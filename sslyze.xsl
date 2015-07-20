@@ -16,6 +16,7 @@
                 <div class="sub-inner-w3">
                   <div class="details-block">
 
+
                     <a id="server" href="#" class="detail-drawer-tab active">
                       <h3> Server Details </h3>
                     </a>
@@ -36,6 +37,7 @@
                       </div>
                     </div>
 
+
                     <a id="chiper" href="#" class="detail-drawer-tab active">
                       <h3>Cipher Suites</h3>
                     </a>
@@ -47,23 +49,33 @@
                         </div>
                         <div class="info-block">
                             <span class="protocol-type"> SSL 2.0 </span>
-                            <span class="data good"> <xsl:apply-templates select="sslv2/@isProtocolSupported"/> </span>
+                            <span class="data good">
+                              <xsl:apply-templates select="sslv2/@isProtocolSupported"/>
+                            </span>
                         </div>
                         <div class="info-block">
                             <span class="protocol-type"> SSL 3.0 </span>
-                            <span class="data good"> <xsl:apply-templates select="sslv3/@isProtocolSupported"/> </span>
+                            <span class="data good">
+                              <xsl:apply-templates select="sslv3/@isProtocolSupported"/>
+                            </span>
                         </div>
                         <div class="info-block">
                             <span class="protocol-type"> TLS 1.0 </span>
-                            <span class="data good"> <xsl:apply-templates select="tlsv1/@isProtocolSupported"/> </span>
+                            <span class="data good">
+                              <xsl:apply-templates select="tlsv1/@isProtocolSupported"/>
+                            </span>
                         </div>
                         <div class="info-block">
                             <span class="protocol-type"> TLS 1.1 </span>
-                            <span class="data good"> <xsl:apply-templates select="tlsv1_1/@isProtocolSupported"/> </span>
+                            <span class="data good">
+                              <xsl:apply-templates select="tlsv1_1/@isProtocolSupported"/>
+                            </span>
                         </div>
                         <div class="info-block">
                             <span class="protocol-type"> TLS 1.2 </span>
-                            <span class="data good"> <xsl:apply-templates select="tlsv1_2/@isProtocolSupported"/> </span>
+                            <span class="data good">
+                              <xsl:apply-templates select="tlsv1_2/@isProtocolSupported"/>
+                            </span>
                         </div>
                       </div>
                       <div class="cipher-drawer">
@@ -74,6 +86,72 @@
                           <xsl:apply-templates select="tlsv1_1"/>
                           <xsl:apply-templates select="tlsv1_2"/>
                         </div>
+                      </div>
+                    </div>
+
+
+                    <a id="misc" href="#" class="detail-drawer-tab active">
+                      <h3> Miscellaneous Details </h3>
+                    </a>
+                    <div style="display: block;" class="detail-drawer">
+                      <div class="drawer-info-holder">
+
+                        <div class="grid">
+                          <div class="info-block">
+                            <strong class="info-category section">
+                              <xsl:value-of select="compression/@title"/>
+                            </strong>
+                            <div class="info-block">
+                              <strong class="grid-data"> isSupported </strong>
+                              <span class="pass-fail good">
+                                <xsl:value-of select="compression/compressionMethod/@isSupported"/>
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="grid">
+                          <div class="info-block">
+                            <strong class="info-category section">
+                              <xsl:value-of select="heartbleed/@title"/>
+                            </strong>
+                            <div class="info-block">
+                              <strong class="grid-data"> isVulnerable </strong>
+                              <span class="pass-fail good">
+                                <xsl:value-of select="heartbleed/openSslHeartbleed/@isVulnerable"/>
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="grid">
+                          <div class="info-block">
+                            <strong class="info-category section">
+                              <xsl:value-of select="reneg/@title"/>
+                            </strong>
+                            <div class="info-block">
+                              <strong class="grid-data"> canBeClientInitiated </strong>
+                              <span class="pass-fail good">
+                                <xsl:value-of select="reneg/sessionRenegotiation/@canBeClientInitiated"/>
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="grid">
+                          <div class="info-block">
+                            <strong class="info-category section">
+                              <xsl:value-of select="resum/@title"/>
+                            </strong>
+                            <div class="info-block">
+                              <strong class="grid-data"> sessionResumptionWithTLSTickets </strong>
+                              <span class="pass-fail good">
+                                <xsl:value-of select="resum/sessionResumptionWithTLSTickets/@isSupported"/>
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
                       </div>
                     </div>
 
