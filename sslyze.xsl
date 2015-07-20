@@ -5,7 +5,7 @@
   <xsl:template match="/document/results/target">
     <html>
       <head>
-        <title>SSL Check</title>
+        <title> SSL Check </title>
         <link media="all" rel="stylesheet" type="text/css" href="all-ssl-config.css"/>
       </head>
       <body class="sub-inner-page">
@@ -15,7 +15,28 @@
               <div class="sub-inner-w2">
                 <div class="sub-inner-w3">
                   <div class="details-block">
-                    <a id="srv" href="#" class="detail-drawer-tab active">
+
+                    <a id="server" href="#" class="detail-drawer-tab active">
+                      <h3> Server Details </h3>
+                    </a>
+                    <div style="display: block;" class="detail-drawer server-drawer">
+                      <div class="drawer-info-holder">
+                        <div class="info-block">
+                          <strong class="info-category"> Hostname: </strong>
+                          <span class="data"> <xsl:value-of select="@host"/> </span>
+                        </div>
+                        <div class="info-block">
+                          <strong class="info-category"> IP Address: </strong>
+                          <span class="data"> <xsl:value-of select="@ip"/> </span>
+                        </div>
+                        <div class="info-block">
+                          <strong class="info-category"> Port: </strong>
+                          <span class="data"> <xsl:value-of select="@port"/> </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <a id="chiper" href="#" class="detail-drawer-tab active">
                       <h3>Cipher Suites</h3>
                     </a>
                     <div style="display: block;" class="detail-drawer server-drawer">
@@ -29,6 +50,7 @@
                         </div>
                       </div>
                     </div>
+
                   </div>
                 </div>
               </div>
@@ -40,31 +62,31 @@
   </xsl:template>
 
   <xsl:template match="sslv2">
-        <strong class="info-category">SSL v2:</strong>
+        <strong class="info-category">SSL 2.0:</strong>
         <strong class="info-category strength">Effective Strength:</strong>
         <xsl:apply-templates select="acceptedCipherSuites" />
   </xsl:template>
 
   <xsl:template match="sslv3">
-        <strong class="info-category">SSL v3:</strong>
+        <strong class="info-category">SSL 3.0:</strong>
         <strong class="info-category strength">Effective Strength:</strong>
         <xsl:apply-templates select="acceptedCipherSuites" />
   </xsl:template>
 
   <xsl:template match="tlsv1">
-        <strong class="info-category">TLS v1.0:</strong>
+        <strong class="info-category">TLS 1.0:</strong>
         <strong class="info-category strength">Effective Strength:</strong>
         <xsl:apply-templates select="acceptedCipherSuites" />
   </xsl:template>
 
   <xsl:template match="tlsv1_1">
-        <strong class="info-category">TLS v1.1:</strong>
+        <strong class="info-category">TLS 1.1:</strong>
         <strong class="info-category strength">Effective Strength:</strong>
         <xsl:apply-templates select="acceptedCipherSuites" />
   </xsl:template>
 
   <xsl:template match="tlsv1_2">
-        <strong class="info-category">TLS v1.2:</strong>
+        <strong class="info-category">TLS 1.2:</strong>
         <strong class="info-category strength">Effective Strength:</strong>
         <xsl:apply-templates select="acceptedCipherSuites" />
   </xsl:template>
@@ -87,4 +109,5 @@
       <xsl:value-of select="."/>
     </span>
   </xsl:template>
+
 </xsl:stylesheet>
