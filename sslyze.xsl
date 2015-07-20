@@ -39,7 +39,33 @@
                     <a id="chiper" href="#" class="detail-drawer-tab active">
                       <h3>Cipher Suites</h3>
                     </a>
-                    <div style="display: block;" class="detail-drawer server-drawer">
+                    <div style="display: block;" class="detail-drawer ssl-drawer">
+                      <div class="drawer-info-holder">
+                        <div class="info-block">
+                          <strong class="info-category"> Protocol: </strong>
+                          <strong class="info-category ssl-supported"> Supported: </strong>
+                        </div>
+                        <div class="info-block">
+                            <span class="protocol-type"> SSL 2.0 </span>
+                            <span class="data good"> <xsl:apply-templates select="sslv2/@isProtocolSupported"/> </span>
+                        </div>
+                        <div class="info-block">
+                            <span class="protocol-type"> SSL 3.0 </span>
+                            <span class="data good"> <xsl:apply-templates select="sslv3/@isProtocolSupported"/> </span>
+                        </div>
+                        <div class="info-block">
+                            <span class="protocol-type"> TLS 1.0 </span>
+                            <span class="data good"> <xsl:apply-templates select="tlsv1/@isProtocolSupported"/> </span>
+                        </div>
+                        <div class="info-block">
+                            <span class="protocol-type"> TLS 1.1 </span>
+                            <span class="data good"> <xsl:apply-templates select="tlsv1_1/@isProtocolSupported"/> </span>
+                        </div>
+                        <div class="info-block">
+                            <span class="protocol-type"> TLS 1.2 </span>
+                            <span class="data good"> <xsl:apply-templates select="tlsv1_2/@isProtocolSupported"/> </span>
+                        </div>
+                      </div>
                       <div class="cipher-drawer">
                         <div class="drawer-info-holder">
                           <xsl:apply-templates select="sslv2"/>
@@ -62,33 +88,43 @@
   </xsl:template>
 
   <xsl:template match="sslv2">
-        <strong class="info-category">SSL 2.0:</strong>
-        <strong class="info-category strength">Effective Strength:</strong>
-        <xsl:apply-templates select="acceptedCipherSuites" />
+    <div class="info-block">
+      <strong class="info-category">SSL 2.0:</strong>
+      <strong class="info-category strength">Effective Strength:</strong>
+      <xsl:apply-templates select="acceptedCipherSuites" />
+    </div>
   </xsl:template>
 
   <xsl:template match="sslv3">
-        <strong class="info-category">SSL 3.0:</strong>
-        <strong class="info-category strength">Effective Strength:</strong>
-        <xsl:apply-templates select="acceptedCipherSuites" />
+    <div class="info-block">
+      <strong class="info-category">SSL 3.0:</strong>
+      <strong class="info-category strength">Effective Strength:</strong>
+      <xsl:apply-templates select="acceptedCipherSuites" />
+    </div>
   </xsl:template>
 
   <xsl:template match="tlsv1">
-        <strong class="info-category">TLS 1.0:</strong>
-        <strong class="info-category strength">Effective Strength:</strong>
-        <xsl:apply-templates select="acceptedCipherSuites" />
+    <div class="info-block">
+      <strong class="info-category">TLS 1.0:</strong>
+      <strong class="info-category strength">Effective Strength:</strong>
+      <xsl:apply-templates select="acceptedCipherSuites" />
+    </div>
   </xsl:template>
 
   <xsl:template match="tlsv1_1">
-        <strong class="info-category">TLS 1.1:</strong>
-        <strong class="info-category strength">Effective Strength:</strong>
-        <xsl:apply-templates select="acceptedCipherSuites" />
+    <div class="info-block">
+      <strong class="info-category">TLS 1.1:</strong>
+      <strong class="info-category strength">Effective Strength:</strong>
+      <xsl:apply-templates select="acceptedCipherSuites" />
+    </div>
   </xsl:template>
 
   <xsl:template match="tlsv1_2">
-        <strong class="info-category">TLS 1.2:</strong>
-        <strong class="info-category strength">Effective Strength:</strong>
-        <xsl:apply-templates select="acceptedCipherSuites" />
+    <div class="info-block">
+      <strong class="info-category">TLS 1.2:</strong>
+      <strong class="info-category strength">Effective Strength:</strong>
+      <xsl:apply-templates select="acceptedCipherSuites" />
+    </div>
   </xsl:template>
 
   <xsl:template match="cipherSuite">
@@ -106,6 +142,12 @@
 
   <xsl:template match="@keySize">
     <span class="data neutral">
+      <xsl:value-of select="."/>
+    </span>
+  </xsl:template>
+
+  <xsl:template match="@isProtocolSupported">
+    <span class="data good">
       <xsl:value-of select="."/>
     </span>
   </xsl:template>
