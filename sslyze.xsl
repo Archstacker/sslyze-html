@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0" xmlns:my="my:my">
   <xsl:output method="html" version="1.0" encoding="utf-8" indent="yes"/>
   <xsl:template match="/document/results/target">
     <html>
@@ -237,41 +237,9 @@
     </html>
   </xsl:template>
 
-  <xsl:template match="sslv2">
+  <xsl:template match="sslv2 | sslv3 | tlsv1 | tlsv1_1 | tlsv1_2">
     <div class="info-block">
-      <strong class="info-category">SSL 2.0:</strong>
-      <strong class="info-category strength">Effective Strength:</strong>
-      <xsl:apply-templates select="acceptedCipherSuites" />
-    </div>
-  </xsl:template>
-
-  <xsl:template match="sslv3">
-    <div class="info-block">
-      <strong class="info-category">SSL 3.0:</strong>
-      <strong class="info-category strength">Effective Strength:</strong>
-      <xsl:apply-templates select="acceptedCipherSuites" />
-    </div>
-  </xsl:template>
-
-  <xsl:template match="tlsv1">
-    <div class="info-block">
-      <strong class="info-category">TLS 1.0:</strong>
-      <strong class="info-category strength">Effective Strength:</strong>
-      <xsl:apply-templates select="acceptedCipherSuites" />
-    </div>
-  </xsl:template>
-
-  <xsl:template match="tlsv1_1">
-    <div class="info-block">
-      <strong class="info-category">TLS 1.1:</strong>
-      <strong class="info-category strength">Effective Strength:</strong>
-      <xsl:apply-templates select="acceptedCipherSuites" />
-    </div>
-  </xsl:template>
-
-  <xsl:template match="tlsv1_2">
-    <div class="info-block">
-      <strong class="info-category">TLS 1.2:</strong>
+        <strong class="info-category"> <xsl:value-of select="@title"/> </strong>
       <strong class="info-category strength">Effective Strength:</strong>
       <xsl:apply-templates select="acceptedCipherSuites" />
     </div>
@@ -312,7 +280,7 @@
               <xsl:for-each select="subject/*">
                 <li>
                     <span class="certificate-data-category">
-                      <xsl:value-of select="name()"/>
+                      <xsl:apply-templates select="."/>
                     </span>
                     <span class="content">
                       <xsl:value-of select="."/>
@@ -325,5 +293,23 @@
       </div>
     </div>
   </xsl:template>
+
+  <my:codes>
+    <code key="organizationalUnitName" value="OU"/>
+    <code key="organizationName" value="O"/>
+    <code key="commonName" value="CN"/>
+    <code key="stateOrProvinceName" value="ST"/>
+    <code key="countryName" value="C"/>
+    <code key="localityName" value="L"/>
+  </my:codes>
+  <xsl:key name="kCodeByName" match="code" use="@key"/>
+
+  <xsl:template match="node()[name() = document('')/*/my:codes/*/@key]">
+      <xsl:variable name="vCur" select="name()"/>
+      <xsl:for-each select="document('')">
+          <xsl:value-of select=
+           "key('kCodeByName', $vCur)/@value"/>
+      </xsl:for-each>
+</xsl:template>
 
 </xsl:stylesheet>
