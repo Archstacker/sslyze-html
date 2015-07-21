@@ -38,6 +38,78 @@
                     </div>
 
 
+                    <a id="cert" href="#" class="detail-drawer-tab active">
+                      <h3>Certificate Details</h3>
+                    </a>
+                    <div style="display: block;" class="detail-drawer certificate-drawer">
+                      <div class="drawer-info-holder">
+                        <div class="info-block">
+                          <strong class="info-category"> Common Name: </strong>
+                          <span class="data"> <xsl:value-of select="certinfo/certificateChain/certificate/subject/commonName"/> </span>
+                        </div>
+                        <div class="info-block">
+                          <strong class="info-category"> Issuer Name: </strong>
+                          <span class="data"> <xsl:value-of select="certinfo/certificateChain/certificate/issuer/commonName"/> </span>
+                        </div>
+                        <div class="info-block">
+                          <strong class="info-category"> Serial Number: </strong>
+                          <span class="data"> <xsl:value-of select="certinfo/certificateChain/certificate/serialNumber"/> </span>
+                        </div>
+                        <div class="info-block">
+                          <strong class="info-category"> Not Before: </strong>
+                          <span class="data"> <xsl:value-of select="certinfo/certificateChain/certificate/validity/notBefore"/> </span>
+                        </div>
+                        <div class="info-block">
+                          <strong class="info-category"> Not After: </strong>
+                          <span class="data"> <xsl:value-of select="certinfo/certificateChain/certificate/validity/notAfter"/> </span>
+                        </div>
+                        <div class="info-block">
+                          <strong class="info-category"> Signature Algorithm: </strong>
+                          <span class="data"> <xsl:value-of select="certinfo/certificateChain/certificate/signatureAlgorithm"/> </span>
+                        </div>
+                        <div class="info-block">
+                          <strong class="info-category"> Public Key Algorithm: </strong>
+                          <span class="data"> <xsl:value-of select="certinfo/certificateChain/certificate/subjectPublicKeyInfo/publicKeyAlgorithm"/> </span>
+                        </div>
+                        <div class="info-block">
+                          <strong class="info-category"> Key Size: </strong>
+                          <span class="data"> <xsl:value-of select="certinfo/certificateChain/certificate/subjectPublicKeyInfo/publicKeySize"/> </span>
+                        </div>
+                        <div class="info-block border-split">
+                          <strong class="info-category"> Exponent: </strong>
+                          <span class="data"> <xsl:value-of select="certinfo/certificateChain/certificate/subjectPublicKeyInfo/publicKey/exponent"/> </span>
+                        </div>
+
+                        <div class="certificate-no-chain-block w-chain-block">
+                          <div class="drawer-info-holder">
+                            <div class="info-block">
+                              <strong class="info-category">Recommended certificate chain:</strong>
+                            </div>
+                            <div class="certificate-chain-block">
+                              <img src="ssl_files/chain-server-certificate.png" alt="Server Certificate image" width="61" height="56"></img>
+                              <div class="chain-holder">
+                                <xsl:apply-templates select="certinfo/certificateChain/certificate[1]"/>
+                              </div>
+                            </div>
+                            <div class="certificate-chain-block">
+                              <img src="ssl_files/chain-intermediate-certificate.png" alt="CA Certificate image" width="61" height="56"></img>
+                              <div class="chain-holder">
+                                <xsl:apply-templates select="certinfo/certificateChain/certificate[2]"/>
+                              </div>
+                            </div>
+                            <div class="certificate-chain-block">
+                              <img src="ssl_files/chain-root-certificate.png" alt="Root Certificate image" width="61" height="56"></img>
+                              <div class="chain-holder root">
+                                <xsl:apply-templates select="certinfo/certificateChain/certificate[3]"/>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                      </div>
+                    </div>
+
+
                     <a id="chiper" href="#" class="detail-drawer-tab active">
                       <h3>Cipher Suites</h3>
                     </a>
@@ -228,6 +300,30 @@
     <span class="data good">
       <xsl:value-of select="."/>
     </span>
+  </xsl:template>
+
+  <xsl:template match="certificate">
+    <div class="certificate-info-block">
+      <div class="certificate-info-holder">
+        <div class="certificate-content">
+          <div class="content-block subject">
+            <div class="content-type"> Subject: </div>
+            <ul class="certificate-data-content">
+              <xsl:for-each select="subject/*">
+                <li>
+                    <span class="certificate-data-category">
+                      <xsl:value-of select="name()"/>
+                    </span>
+                    <span class="content">
+                      <xsl:value-of select="."/>
+                    </span>
+                </li>
+              </xsl:for-each>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
   </xsl:template>
 
 </xsl:stylesheet>
