@@ -16,7 +16,6 @@
                 <div class="sub-inner-w3">
                   <div class="details-block">
 
-
                     <a id="server" href="#" class="detail-drawer-tab active">
                       <h3> Server Details </h3>
                     </a>
@@ -37,78 +36,14 @@
                       </div>
                     </div>
 
-
                     <a id="cert" href="#" class="detail-drawer-tab active">
                       <h3>Certificate Details</h3>
                     </a>
                     <div style="display: block;" class="detail-drawer certificate-drawer">
                       <div class="drawer-info-holder">
-                        <div class="info-block">
-                          <strong class="info-category"> Common Name: </strong>
-                          <span class="data"> <xsl:value-of select="certinfo/certificateChain/certificate/subject/commonName"/> </span>
-                        </div>
-                        <div class="info-block">
-                          <strong class="info-category"> Issuer Name: </strong>
-                          <span class="data"> <xsl:value-of select="certinfo/certificateChain/certificate/issuer/commonName"/> </span>
-                        </div>
-                        <div class="info-block">
-                          <strong class="info-category"> Serial Number: </strong>
-                          <span class="data"> <xsl:value-of select="certinfo/certificateChain/certificate/serialNumber"/> </span>
-                        </div>
-                        <div class="info-block">
-                          <strong class="info-category"> Not Before: </strong>
-                          <span class="data"> <xsl:value-of select="certinfo/certificateChain/certificate/validity/notBefore"/> </span>
-                        </div>
-                        <div class="info-block">
-                          <strong class="info-category"> Not After: </strong>
-                          <span class="data"> <xsl:value-of select="certinfo/certificateChain/certificate/validity/notAfter"/> </span>
-                        </div>
-                        <div class="info-block">
-                          <strong class="info-category"> Signature Algorithm: </strong>
-                          <span class="data"> <xsl:value-of select="certinfo/certificateChain/certificate/signatureAlgorithm"/> </span>
-                        </div>
-                        <div class="info-block">
-                          <strong class="info-category"> Public Key Algorithm: </strong>
-                          <span class="data"> <xsl:value-of select="certinfo/certificateChain/certificate/subjectPublicKeyInfo/publicKeyAlgorithm"/> </span>
-                        </div>
-                        <div class="info-block">
-                          <strong class="info-category"> Key Size: </strong>
-                          <span class="data"> <xsl:value-of select="certinfo/certificateChain/certificate/subjectPublicKeyInfo/publicKeySize"/> </span>
-                        </div>
-                        <div class="info-block border-split">
-                          <strong class="info-category"> Exponent: </strong>
-                          <span class="data"> <xsl:value-of select="certinfo/certificateChain/certificate/subjectPublicKeyInfo/publicKey/exponent"/> </span>
-                        </div>
-
-                        <div class="certificate-no-chain-block w-chain-block">
-                          <div class="drawer-info-holder">
-                            <div class="info-block">
-                              <strong class="info-category">Recommended certificate chain:</strong>
-                            </div>
-                            <div class="certificate-chain-block">
-                              <img src="ssl_files/chain-server-certificate.png" alt="Server Certificate image" width="61" height="56"></img>
-                              <div class="chain-holder">
-                                <xsl:apply-templates select="certinfo/certificateChain/certificate[1]"/>
-                              </div>
-                            </div>
-                            <div class="certificate-chain-block">
-                              <img src="ssl_files/chain-intermediate-certificate.png" alt="CA Certificate image" width="61" height="56"></img>
-                              <div class="chain-holder">
-                                <xsl:apply-templates select="certinfo/certificateChain/certificate[2]"/>
-                              </div>
-                            </div>
-                            <div class="certificate-chain-block">
-                              <img src="ssl_files/chain-root-certificate.png" alt="Root Certificate image" width="61" height="56"></img>
-                              <div class="chain-holder root">
-                                <xsl:apply-templates select="certinfo/certificateChain/certificate[3]"/>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
+                        <xsl:apply-templates select="certinfo/certificateChain"/>
                       </div>
                     </div>
-
 
                     <a id="chiper" href="#" class="detail-drawer-tab active">
                       <h3>Cipher Suites</h3>
@@ -161,69 +96,15 @@
                       </div>
                     </div>
 
-
                     <a id="misc" href="#" class="detail-drawer-tab active">
                       <h3> Miscellaneous Details </h3>
                     </a>
                     <div style="display: block;" class="detail-drawer">
                       <div class="drawer-info-holder">
-
-                        <div class="grid">
-                          <div class="info-block">
-                            <strong class="info-category section">
-                              <xsl:value-of select="compression/@title"/>
-                            </strong>
-                            <div class="info-block">
-                              <strong class="grid-data"> isSupported </strong>
-                              <span class="pass-fail good">
-                                <xsl:value-of select="compression/compressionMethod/@isSupported"/>
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div class="grid">
-                          <div class="info-block">
-                            <strong class="info-category section">
-                              <xsl:value-of select="heartbleed/@title"/>
-                            </strong>
-                            <div class="info-block">
-                              <strong class="grid-data"> isVulnerable </strong>
-                              <span class="pass-fail good">
-                                <xsl:value-of select="heartbleed/openSslHeartbleed/@isVulnerable"/>
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div class="grid">
-                          <div class="info-block">
-                            <strong class="info-category section">
-                              <xsl:value-of select="reneg/@title"/>
-                            </strong>
-                            <div class="info-block">
-                              <strong class="grid-data"> canBeClientInitiated </strong>
-                              <span class="pass-fail good">
-                                <xsl:value-of select="reneg/sessionRenegotiation/@canBeClientInitiated"/>
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div class="grid">
-                          <div class="info-block">
-                            <strong class="info-category section">
-                              <xsl:value-of select="resum/@title"/>
-                            </strong>
-                            <div class="info-block">
-                              <strong class="grid-data"> sessionResumptionWithTLSTickets </strong>
-                              <span class="pass-fail good">
-                                <xsl:value-of select="resum/sessionResumptionWithTLSTickets/@isSupported"/>
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-
+                        <xsl:apply-templates select="compression"/>
+                        <xsl:apply-templates select="heartbleed"/>
+                        <xsl:apply-templates select="reneg"/>
+                        <xsl:apply-templates select="resum"/>
                       </div>
                     </div>
 
@@ -270,6 +151,71 @@
     </span>
   </xsl:template>
 
+  <xsl:template match="certificateChain">
+    <div class="info-block">
+      <strong class="info-category"> Common Name: </strong>
+      <span class="data"> <xsl:value-of select="certificate/subject/commonName"/> </span>
+    </div>
+    <div class="info-block">
+      <strong class="info-category"> Issuer Name: </strong>
+      <span class="data"> <xsl:value-of select="certificate/issuer/commonName"/> </span>
+    </div>
+    <div class="info-block">
+      <strong class="info-category"> Serial Number: </strong>
+      <span class="data"> <xsl:value-of select="certificate/serialNumber"/> </span>
+    </div>
+    <div class="info-block">
+      <strong class="info-category"> Not Before: </strong>
+      <span class="data"> <xsl:value-of select="certificate/validity/notBefore"/> </span>
+    </div>
+    <div class="info-block">
+      <strong class="info-category"> Not After: </strong>
+      <span class="data"> <xsl:value-of select="certificate/validity/notAfter"/> </span>
+    </div>
+    <div class="info-block">
+      <strong class="info-category"> Signature Algorithm: </strong>
+      <span class="data"> <xsl:value-of select="certificate/signatureAlgorithm"/> </span>
+    </div>
+    <div class="info-block">
+      <strong class="info-category"> Public Key Algorithm: </strong>
+      <span class="data"> <xsl:value-of select="certificate/subjectPublicKeyInfo/publicKeyAlgorithm"/> </span>
+    </div>
+    <div class="info-block">
+      <strong class="info-category"> Key Size: </strong>
+      <span class="data"> <xsl:value-of select="certificate/subjectPublicKeyInfo/publicKeySize"/> </span>
+    </div>
+    <div class="info-block border-split">
+      <strong class="info-category"> Exponent: </strong>
+      <span class="data"> <xsl:value-of select="certificate/subjectPublicKeyInfo/publicKey/exponent"/> </span>
+    </div>
+
+    <div class="certificate-no-chain-block w-chain-block">
+      <div class="drawer-info-holder">
+        <div class="info-block">
+          <strong class="info-category">Recommended certificate chain:</strong>
+        </div>
+        <div class="certificate-chain-block">
+          <img src="ssl_files/chain-server-certificate.png" alt="Server Certificate image" width="61" height="56"></img>
+          <div class="chain-holder">
+            <xsl:apply-templates select="certificate[1]"/>
+          </div>
+        </div>
+        <div class="certificate-chain-block">
+          <img src="ssl_files/chain-intermediate-certificate.png" alt="CA Certificate image" width="61" height="56"></img>
+          <div class="chain-holder">
+            <xsl:apply-templates select="certificate[2]"/>
+          </div>
+        </div>
+        <div class="certificate-chain-block">
+          <img src="ssl_files/chain-root-certificate.png" alt="Root Certificate image" width="61" height="56"></img>
+          <div class="chain-holder root">
+            <xsl:apply-templates select="certificate[3]"/>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </xsl:template>
   <xsl:template match="certificate">
     <div class="certificate-info-block">
       <div class="certificate-info-holder">
@@ -342,5 +288,69 @@
            "key('kCodeByName', $vCur)/@value"/>
       </xsl:for-each>
 </xsl:template>
+
+  <xsl:template match="compression">
+    <div class="grid">
+      <div class="info-block">
+        <strong class="info-category section">
+          <xsl:value-of select="@title"/>
+        </strong>
+        <div class="info-block">
+          <strong class="grid-data"> isSupported </strong>
+          <span class="pass-fail good">
+            <xsl:value-of select="compressionMethod/@isSupported"/>
+          </span>
+        </div>
+      </div>
+    </div>
+  </xsl:template>
+
+  <xsl:template match="heartbleed">
+    <div class="grid">
+      <div class="info-block">
+        <strong class="info-category section">
+          <xsl:value-of select="@title"/>
+        </strong>
+        <div class="info-block">
+          <strong class="grid-data"> isVulnerable </strong>
+          <span class="pass-fail good">
+            <xsl:value-of select="openSslHeartbleed/@isVulnerable"/>
+          </span>
+        </div>
+      </div>
+    </div>
+  </xsl:template>
+
+  <xsl:template match="reneg">
+    <div class="grid">
+      <div class="info-block">
+        <strong class="info-category section">
+          <xsl:value-of select="@title"/>
+        </strong>
+        <div class="info-block">
+          <strong class="grid-data"> canBeClientInitiated </strong>
+          <span class="pass-fail good">
+            <xsl:value-of select="sessionRenegotiation/@canBeClientInitiated"/>
+          </span>
+        </div>
+      </div>
+    </div>
+  </xsl:template>
+
+  <xsl:template match="resum">
+    <div class="grid">
+      <div class="info-block">
+        <strong class="info-category section">
+          <xsl:value-of select="@title"/>
+        </strong>
+        <div class="info-block">
+          <strong class="grid-data"> sessionResumptionWithTLSTickets </strong>
+          <span class="pass-fail good">
+            <xsl:value-of select="sessionResumptionWithTLSTickets/@isSupported"/>
+          </span>
+        </div>
+      </div>
+    </div>
+  </xsl:template>
 
 </xsl:stylesheet>
