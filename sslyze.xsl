@@ -289,6 +289,37 @@
               </xsl:for-each>
             </ul>
           </div>
+          <div class="content-block issuer">
+            <div class="content-type"> Issuer: </div>
+            <ul class="certificate-data-content">
+              <xsl:for-each select="issuer/*">
+                <li>
+                    <span class="certificate-data-category">
+                      <xsl:apply-templates select="."/>
+                    </span>
+                    <span class="content">
+                      <xsl:value-of select="."/>
+                    </span>
+                </li>
+              </xsl:for-each>
+            </ul>
+          </div>
+          <div class="content-block last">
+            <ul class="certificate-last-info">
+              <li>
+                <div class="content-type"> Expiration Date: </div>
+                <div class="cert-data">
+                  <xsl:value-of select="validity/notAfter"/>
+                </div>
+              </li>
+              <li>
+                <div class="content-type"> Fingerprint (SHA-1): </div>
+                <div class="cert-data">
+                  <xsl:value-of select="@sha1Fingerprint"/>
+                </div>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
