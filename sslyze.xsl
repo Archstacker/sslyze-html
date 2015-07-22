@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0" xmlns:my="my:my">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
   <xsl:output method="html" version="1.0" encoding="utf-8" indent="yes"/>
   <xsl:template match="/document/results/target">
     <html>
@@ -226,7 +226,9 @@
               <xsl:for-each select="subject/*">
                 <li>
                     <span class="certificate-data-category">
-                      <xsl:apply-templates select="."/>
+                      <xsl:call-template name="lookup">
+                        <xsl:with-param name="key" select="name()"/>
+                      </xsl:call-template>
                     </span>
                     <span class="content">
                       <xsl:value-of select="."/>
@@ -241,7 +243,9 @@
               <xsl:for-each select="issuer/*">
                 <li>
                     <span class="certificate-data-category">
-                      <xsl:apply-templates select="."/>
+                      <xsl:call-template name="lookup">
+                        <xsl:with-param name="key" select="name()"/>
+                      </xsl:call-template>
                     </span>
                     <span class="content">
                       <xsl:value-of select="."/>
@@ -271,21 +275,20 @@
     </div>
   </xsl:template>
 
-  <my:codes>
+  <xsl:variable name="codes">
     <code key="organizationalUnitName" value="OU"/>
     <code key="organizationName" value="O"/>
     <code key="commonName" value="CN"/>
     <code key="stateOrProvinceName" value="ST"/>
     <code key="countryName" value="C"/>
     <code key="localityName" value="L"/>
-  </my:codes>
+  </xsl:variable>
   <xsl:key name="kCodeByName" match="code" use="@key"/>
 
-  <xsl:template match="node()[name() = document('')/*/my:codes/*/@key]">
-      <xsl:variable name="vCur" select="name()"/>
+  <xsl:template name="lookup">
+      <xsl:param name="key"/>
       <xsl:for-each select="document('')">
-          <xsl:value-of select=
-           "key('kCodeByName', $vCur)/@value"/>
+          <xsl:value-of select="key('kCodeByName', $key)/@value"/>
       </xsl:for-each>
 </xsl:template>
 
