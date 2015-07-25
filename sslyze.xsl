@@ -290,70 +290,96 @@
       <xsl:for-each select="document('')">
           <xsl:value-of select="key('kCodeByName', $key)/@value"/>
       </xsl:for-each>
-</xsl:template>
+  </xsl:template>
 
-  <xsl:template match="compression">
+  <xsl:template match="compression | heartbleed | reneg | resum">
     <div class="grid">
       <div class="info-block">
         <strong class="info-category section">
           <xsl:value-of select="@title"/>
         </strong>
         <div class="info-block">
-          <strong class="grid-data"> isSupported </strong>
-          <span class="pass-fail good">
-            <xsl:value-of select="compressionMethod/@isSupported"/>
-          </span>
+          <xsl:for-each select="*">
+            <xsl:apply-templates select="."/>
+          </xsl:for-each>
         </div>
       </div>
     </div>
   </xsl:template>
 
-  <xsl:template match="heartbleed">
-    <div class="grid">
-      <div class="info-block">
-        <strong class="info-category section">
-          <xsl:value-of select="@title"/>
-        </strong>
-        <div class="info-block">
-          <strong class="grid-data"> isVulnerable </strong>
-          <span class="pass-fail good">
-            <xsl:value-of select="openSslHeartbleed/@isVulnerable"/>
-          </span>
-        </div>
-      </div>
-    </div>
+  <xsl:template match="compression/compressionMethod">
+    <strong class="grid-data"> Server supports Deflate compression </strong>
+    <xsl:choose>
+      <xsl:when test="@isSupported != 'True'">
+        <span class="pass-fail good">
+          <xsl:value-of select="@isSupported"/>
+        </span>
+      </xsl:when>
+      <xsl:otherwise>
+        <span class="pass-fail bad">
+          <xsl:value-of select="@isSupported"/>
+        </span>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
-  <xsl:template match="reneg">
-    <div class="grid">
-      <div class="info-block">
-        <strong class="info-category section">
-          <xsl:value-of select="@title"/>
-        </strong>
-        <div class="info-block">
-          <strong class="grid-data"> canBeClientInitiated </strong>
-          <span class="pass-fail good">
-            <xsl:value-of select="sessionRenegotiation/@canBeClientInitiated"/>
-          </span>
-        </div>
-      </div>
-    </div>
+  <xsl:template match="heartbleed/openSslHeartbleed">
+    <strong class="grid-data"> Server is vulnerable to Heartbleed </strong>
+    <xsl:choose>
+      <xsl:when test="@isVulnerable != 'True'">
+        <span class="pass-fail good">
+          <xsl:value-of select="@isVulnerable"/>
+        </span>
+      </xsl:when>
+      <xsl:otherwise>
+        <span class="pass-fail bad">
+          <xsl:value-of select="@isVulnerable"/>
+        </span>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
-  <xsl:template match="resum">
-    <div class="grid">
-      <div class="info-block">
-        <strong class="info-category section">
-          <xsl:value-of select="@title"/>
-        </strong>
-        <div class="info-block">
-          <strong class="grid-data"> sessionResumptionWithTLSTickets </strong>
-          <span class="pass-fail good">
-            <xsl:value-of select="sessionResumptionWithTLSTickets/@isSupported"/>
-          </span>
-        </div>
-      </div>
-    </div>
+  <xsl:template match="reneg/sessionRenegotiation">
+    <strong class="grid-data"> Server honors client-initiated renegotiations </strong>
+    <xsl:choose>
+      <xsl:when test="@canBeClientInitiated != 'True'">
+        <span class="pass-fail good">
+          <xsl:value-of select="@canBeClientInitiated"/>
+        </span>
+      </xsl:when>
+      <xsl:otherwise>
+        <span class="pass-fail bad">
+          <xsl:value-of select="@canBeClientInitiated"/>
+        </span>
+      </xsl:otherwise>
+    </xsl:choose>
+    <strong class="grid-data"> Secure renegotiation supported </strong>
+    <xsl:choose>
+      <xsl:when test="@isSecure != 'False'">
+        <span class="pass-fail good">
+          <xsl:value-of select="@isSecure "/>
+        </span>
+      </xsl:when>
+      <xsl:otherwise>
+        <span class="pass-fail bad">
+          <xsl:value-of select="@isSecure "/>
+        </span>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <xsl:template match="resum/sessionResumptionWithSessionIDs">
+    <strong class="grid-data"> With Session IDs </strong>
+    <span class="pass-fail good">
+      <xsl:value-of select="@isSupported"/>
+    </span>
+  </xsl:template>
+
+  <xsl:template match="resum/sessionResumptionWithTLSTickets">
+    <strong class="grid-data"> With TLS Session Tickets </strong>
+      <span class="pass-fail good">
+        <xsl:value-of select="@isSupported"/>
+      </span>
   </xsl:template>
 
 </xsl:stylesheet>
