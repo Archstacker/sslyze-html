@@ -2,6 +2,52 @@
 
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
   <xsl:output method="html" version="1.0" encoding="utf-8" indent="yes"/>
+
+  <xsl:variable name="relationship">
+    <full key="host" value="Hostname"/>
+    <full key="ip" value="IP Address"/>
+    <full key="port" value="Port"/>
+
+    <full key="commonName" value="Common Name"/>
+    <full key="serialNumber" value="Serial Number"/>
+    <full key="notBefore" value="Not Before"/>
+    <full key="notAfter" value="Not After"/>
+    <full key="signatureAlgorithm" value="Signature Algorithm"/>
+    <full key="publicKeyAlgorithm" value="Public Key Algorithm"/>
+    <full key="publicKeySize" value="Key Size"/>
+    <full key="exponent" value="Exponent"/>
+
+    <short key="organizationalUnitName" value="OU"/>
+    <short key="organizationName" value="O"/>
+    <short key="commonName" value="CN"/>
+    <short key="stateOrProvinceName" value="ST"/>
+    <short key="countryName" value="C"/>
+    <short key="localityName" value="L"/>
+
+    <full key="sslv2" value="SSL 2.0"/>
+    <full key="sslv3" value="SSL 3.0"/>
+    <full key="tlsv1" value="TLS 1.0"/>
+    <full key="tlsv1_1" value="TLS 1.1"/>
+    <full key="tlsv1_2" value="TLS 1.2"/>
+  </xsl:variable>
+
+  <xsl:key name="FullName" match="full" use="@key"/>
+  <xsl:key name="ShortName" match="short" use="@key"/>
+
+  <xsl:template name="fullname">
+      <xsl:param name="key"/>
+      <xsl:for-each select="document('')">
+          <xsl:value-of select="key('FullName', $key)/@value"/>
+      </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template name="shortname">
+      <xsl:param name="key"/>
+      <xsl:for-each select="document('')">
+          <xsl:value-of select="key('ShortName', $key)/@value"/>
+      </xsl:for-each>
+  </xsl:template>
+
   <xsl:template match="/document/results/target">
     <html>
       <head>
@@ -21,18 +67,15 @@
                     </a>
                     <div style="display: block;" class="detail-drawer server-drawer">
                       <div class="drawer-info-holder">
-                        <div class="info-block">
-                          <strong class="info-category"> Hostname: </strong>
-                          <span class="data"> <xsl:value-of select="@host"/> </span>
-                        </div>
-                        <div class="info-block">
-                          <strong class="info-category"> IP Address: </strong>
-                          <span class="data"> <xsl:value-of select="@ip"/> </span>
-                        </div>
-                        <div class="info-block">
-                          <strong class="info-category"> Port: </strong>
-                          <span class="data"> <xsl:value-of select="@port"/> </span>
-                        </div>
+                        <xsl:call-template name="basic-info-block">
+                          <xsl:with-param name="node" select="@host"/>
+                        </xsl:call-template>
+                        <xsl:call-template name="basic-info-block">
+                          <xsl:with-param name="node" select="@ip"/>
+                        </xsl:call-template>
+                        <xsl:call-template name="basic-info-block">
+                          <xsl:with-param name="node" select="@port"/>
+                        </xsl:call-template>
                       </div>
                     </div>
 
@@ -54,44 +97,11 @@
                           <strong class="info-category"> Protocol: </strong>
                           <strong class="info-category ssl-supported"> Supported: </strong>
                         </div>
-                        <div class="info-block">
-                            <span class="protocol-type"> SSL 2.0 </span>
-                            <span class="data good">
-                              <xsl:apply-templates select="sslv2/@isProtocolSupported"/>
-                            </span>
-                        </div>
-                        <div class="info-block">
-                            <span class="protocol-type"> SSL 3.0 </span>
-                            <span class="data good">
-                              <xsl:apply-templates select="sslv3/@isProtocolSupported"/>
-                            </span>
-                        </div>
-                        <div class="info-block">
-                            <span class="protocol-type"> TLS 1.0 </span>
-                            <span class="data good">
-                              <xsl:apply-templates select="tlsv1/@isProtocolSupported"/>
-                            </span>
-                        </div>
-                        <div class="info-block">
-                            <span class="protocol-type"> TLS 1.1 </span>
-                            <span class="data good">
-                              <xsl:apply-templates select="tlsv1_1/@isProtocolSupported"/>
-                            </span>
-                        </div>
-                        <div class="info-block">
-                            <span class="protocol-type"> TLS 1.2 </span>
-                            <span class="data good">
-                              <xsl:apply-templates select="tlsv1_2/@isProtocolSupported"/>
-                            </span>
-                        </div>
+                        <xsl:apply-templates select="(sslv2 | sslv3 | tlsv1 | tlsv1_1 | tlsv1_2)/@isProtocolSupported"/>
                       </div>
                       <div class="cipher-drawer">
                         <div class="drawer-info-holder">
-                          <xsl:apply-templates select="sslv2"/>
-                          <xsl:apply-templates select="sslv3"/>
-                          <xsl:apply-templates select="tlsv1"/>
-                          <xsl:apply-templates select="tlsv1_1"/>
-                          <xsl:apply-templates select="tlsv1_2"/>
+                          <xsl:apply-templates select="sslv2 | sslv3 | tlsv1 | tlsv1_1 | tlsv1_2"/>
                         </div>
                       </div>
                     </div>
@@ -101,10 +111,7 @@
                     </a>
                     <div style="display: block;" class="detail-drawer">
                       <div class="drawer-info-holder">
-                        <xsl:apply-templates select="compression"/>
-                        <xsl:apply-templates select="heartbleed"/>
-                        <xsl:apply-templates select="reneg"/>
-                        <xsl:apply-templates select="resum"/>
+                        <xsl:apply-templates select="compression | heartbleed | reneg | resum"/>
                       </div>
                     </div>
 
@@ -118,9 +125,24 @@
     </html>
   </xsl:template>
 
+  <xsl:template name="basic-info-block">
+    <xsl:param name="node"/>
+    <xsl:param name="addition" select="''" />
+    <div class="info-block {$addition}">
+      <strong class="info-category">
+        <xsl:call-template name="fullname">
+          <xsl:with-param name="key" select="name($node)"/>
+        </xsl:call-template>
+      </strong>
+      <span class="data">
+        <xsl:value-of select="$node"/>
+      </span>
+    </div>
+  </xsl:template>
+
   <xsl:template match="sslv2 | sslv3 | tlsv1 | tlsv1_1 | tlsv1_2">
     <div class="info-block">
-        <strong class="info-category"> <xsl:value-of select="@title"/> </strong>
+      <strong class="info-category section"> <xsl:value-of select="@title"/> </strong>
       <strong class="info-category strength">Effective Strength:</strong>
       <xsl:apply-templates select="acceptedCipherSuites" />
     </div>
@@ -133,61 +155,97 @@
     </div>
   </xsl:template>
 
-  <xsl:template match="@name">
+  <xsl:template match="cipherSuite/@name">
     <span class="protocol-type">
       <xsl:value-of select="."/>
     </span>
   </xsl:template>
 
-  <xsl:template match="@keySize">
-    <span class="data neutral">
-      <xsl:value-of select="."/>
-    </span>
+  <xsl:template match="cipherSuite/@keySize">
+    <xsl:choose>
+      <xsl:when test=". &gt;= 128">
+        <span class="data neutral">
+          <xsl:value-of select="."/>
+        </span>
+      </xsl:when>
+      <xsl:otherwise>
+        <span class="data bad">
+          <xsl:value-of select="."/>
+        </span>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <xsl:template match="@isProtocolSupported">
-    <span class="data good">
-      <xsl:value-of select="."/>
-    </span>
+    <div class="info-block">
+      <span class="protocol-type"> 
+        <xsl:call-template name="fullname">
+          <xsl:with-param name="key" select="name(..)"/>
+        </xsl:call-template>
+      </span>
+      <xsl:choose>
+        <xsl:when test="(starts-with(name(..),'ssl') and .='False') or (starts-with(name(..),'tls') and .='True')">
+          <span class="data good">
+            <xsl:value-of select="."/>
+          </span>
+        </xsl:when>
+        <xsl:otherwise>
+          <span class="data bad">
+            <xsl:value-of select="."/>
+          </span>
+          <xsl:choose>
+            <xsl:when test="name(..) = 'sslv2'">
+              <xsl:call-template name="tooltip">
+                <xsl:with-param name="tipstr" select="'SSL v2 should be disabled as it has known security issues'"/>
+              </xsl:call-template>
+            </xsl:when>
+            <xsl:when test="name(..) = 'sslv3'">
+              <xsl:call-template name="tooltip">
+                <xsl:with-param name="tipstr" select="'SSL v3 should be disabled if compatibility with older mobile clients is not required'"/>
+              </xsl:call-template>
+            </xsl:when>
+            <xsl:when test="name(..) = 'tlsv1'">
+              <xsl:call-template name="tooltip">
+                <xsl:with-param name="tipstr" select="'TLS v1.0 should be enabled for optimum compatibility'"/>
+              </xsl:call-template>
+            </xsl:when>
+            <xsl:when test="name(..) = 'tlsv1_1' or name(..) = 'tlsv1_2'">
+              <xsl:call-template name="tooltip">
+                <xsl:with-param name="tipstr" select="'Server should enable more recent versions of TLS protocol'"/>
+              </xsl:call-template>
+            </xsl:when>
+          </xsl:choose>
+        </xsl:otherwise>
+      </xsl:choose>
+    </div>
   </xsl:template>
 
   <xsl:template match="certificateChain">
-    <div class="info-block">
-      <strong class="info-category"> Common Name: </strong>
-      <span class="data"> <xsl:value-of select="certificate/subject/commonName"/> </span>
-    </div>
-    <div class="info-block">
-      <strong class="info-category"> Issuer Name: </strong>
-      <span class="data"> <xsl:value-of select="certificate/issuer/commonName"/> </span>
-    </div>
-    <div class="info-block">
-      <strong class="info-category"> Serial Number: </strong>
-      <span class="data"> <xsl:value-of select="certificate/serialNumber"/> </span>
-    </div>
-    <div class="info-block">
-      <strong class="info-category"> Not Before: </strong>
-      <span class="data"> <xsl:value-of select="certificate/validity/notBefore"/> </span>
-    </div>
-    <div class="info-block">
-      <strong class="info-category"> Not After: </strong>
-      <span class="data"> <xsl:value-of select="certificate/validity/notAfter"/> </span>
-    </div>
-    <div class="info-block">
-      <strong class="info-category"> Signature Algorithm: </strong>
-      <span class="data"> <xsl:value-of select="certificate/signatureAlgorithm"/> </span>
-    </div>
-    <div class="info-block">
-      <strong class="info-category"> Public Key Algorithm: </strong>
-      <span class="data"> <xsl:value-of select="certificate/subjectPublicKeyInfo/publicKeyAlgorithm"/> </span>
-    </div>
-    <div class="info-block">
-      <strong class="info-category"> Key Size: </strong>
-      <span class="data"> <xsl:value-of select="certificate/subjectPublicKeyInfo/publicKeySize"/> </span>
-    </div>
-    <div class="info-block border-split">
-      <strong class="info-category"> Exponent: </strong>
-      <span class="data"> <xsl:value-of select="certificate/subjectPublicKeyInfo/publicKey/exponent"/> </span>
-    </div>
+    <xsl:call-template name="basic-info-block">
+      <xsl:with-param name="node" select="certificate/subject/commonName"/>
+    </xsl:call-template>
+    <xsl:call-template name="basic-info-block">
+      <xsl:with-param name="node" select="certificate/serialNumber"/>
+    </xsl:call-template>
+    <xsl:call-template name="basic-info-block">
+      <xsl:with-param name="node" select="certificate/validity/notBefore"/>
+    </xsl:call-template>
+    <xsl:call-template name="basic-info-block">
+      <xsl:with-param name="node" select="certificate/validity/notAfter"/>
+    </xsl:call-template>
+    <xsl:call-template name="basic-info-block">
+      <xsl:with-param name="node" select="certificate/signatureAlgorithm"/>
+    </xsl:call-template>
+    <xsl:call-template name="basic-info-block">
+      <xsl:with-param name="node" select="certificate/subjectPublicKeyInfo/publicKeyAlgorithm"/>
+    </xsl:call-template>
+    <xsl:call-template name="basic-info-block">
+      <xsl:with-param name="node" select="certificate/subjectPublicKeyInfo/publicKeySize"/>
+    </xsl:call-template>
+    <xsl:call-template name="basic-info-block">
+      <xsl:with-param name="node" select="certificate/subjectPublicKeyInfo/publicKey/exponent"/>
+      <xsl:with-param name="addition" select="'border-split'"/>
+    </xsl:call-template>
 
     <div class="certificate-no-chain-block">
       <div class="drawer-info-holder">
@@ -210,7 +268,7 @@
               <xsl:for-each select="subject/*">
                 <li>
                     <span class="certificate-data-category">
-                      <xsl:call-template name="lookup">
+                      <xsl:call-template name="shortname">
                         <xsl:with-param name="key" select="name()"/>
                       </xsl:call-template>
                     </span>
@@ -227,7 +285,7 @@
               <xsl:for-each select="issuer/*">
                 <li>
                     <span class="certificate-data-category">
-                      <xsl:call-template name="lookup">
+                      <xsl:call-template name="shortname">
                         <xsl:with-param name="key" select="name()"/>
                       </xsl:call-template>
                     </span>
@@ -254,27 +312,12 @@
               </li>
             </ul>
           </div>
-          <a href="data:application/x-pem-file;charset=utf-8,{asPEM}" download="{@sha1Fingerprint}.pem" target="_blank" class="download-link">Download Certificate</a>
+          <a href="data:application/x-pem-file,{asPEM}" download="{@sha1Fingerprint}.pem" class="download-link">
+            Download Certificate
+          </a>
         </div>
       </div>
     </div>
-  </xsl:template>
-
-  <xsl:variable name="codes">
-    <code key="organizationalUnitName" value="OU"/>
-    <code key="organizationName" value="O"/>
-    <code key="commonName" value="CN"/>
-    <code key="stateOrProvinceName" value="ST"/>
-    <code key="countryName" value="C"/>
-    <code key="localityName" value="L"/>
-  </xsl:variable>
-  <xsl:key name="kCodeByName" match="code" use="@key"/>
-
-  <xsl:template name="lookup">
-      <xsl:param name="key"/>
-      <xsl:for-each select="document('')">
-          <xsl:value-of select="key('kCodeByName', $key)/@value"/>
-      </xsl:for-each>
   </xsl:template>
 
   <xsl:template match="compression | heartbleed | reneg | resum">
@@ -325,7 +368,7 @@
   </xsl:template>
 
   <xsl:template match="reneg/sessionRenegotiation">
-    <strong class="grid-data"> Server honors client-initiated renegotiations </strong>
+    <strong class="grid-data"> Secure Renegotiation (Client-Initiated) </strong>
     <xsl:choose>
       <xsl:when test="@canBeClientInitiated != 'True'">
         <span class="pass-fail good">
@@ -336,9 +379,12 @@
         <span class="pass-fail bad">
           <xsl:value-of select="@canBeClientInitiated"/>
         </span>
+        <xsl:call-template name="tooltip">
+          <xsl:with-param name="tipstr" select="'Client-initiated renegotiation should be disabled'"/>
+        </xsl:call-template>
       </xsl:otherwise>
     </xsl:choose>
-    <strong class="grid-data"> Secure renegotiation supported </strong>
+    <strong class="grid-data"> Secure Renegotiation (Server-Initiated) </strong>
     <xsl:choose>
       <xsl:when test="@isSecure != 'False'">
         <span class="pass-fail good">
@@ -349,6 +395,9 @@
         <span class="pass-fail bad">
           <xsl:value-of select="@isSecure "/>
         </span>
+        <xsl:call-template name="tooltip">
+          <xsl:with-param name="tipstr" select="'Secure server-initiated renegotiation should be enabled'"/>
+        </xsl:call-template>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
@@ -365,6 +414,18 @@
       <span class="pass-fail good">
         <xsl:value-of select="@isSupported"/>
       </span>
+  </xsl:template>
+
+  <xsl:template name="tooltip">
+    <xsl:param name="tipstr"/>
+      <a class="tooltip-link overflow">
+        <span class="tooltip">
+          <span class="tooltip-holder">
+              <xsl:value-of select="$tipstr" />
+            <span class="arrow">arrow</span>
+          </span>
+        </span>
+      </a>
   </xsl:template>
 
 </xsl:stylesheet>
