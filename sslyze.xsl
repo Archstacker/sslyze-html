@@ -52,7 +52,7 @@
     <html>
       <head>
         <title> SSL Check </title>
-        <link media="all" rel="stylesheet" type="text/css" href="all-ssl-config.css"/>
+        <link media="all" rel="stylesheet" type="text/css" href="https://sslcheck.globalsign.com/stylesheets/all-ssl-config.css"/>
       </head>
       <body class="sub-inner-page">
         <div id="wrapper">
@@ -260,7 +260,7 @@
   <xsl:template match="certificate">
     <div class="certificate-info-block">
       <div class="certificate-info-holder">
-        <img src="cert-icon.gif" alt="Server Certificate image" height="67" width="73"></img>
+        <img src="https://sslcheck.globalsign.com/images/cert-icon.gif" alt="Server Certificate image" height="67" width="73"></img>
         <div class="certificate-content">
           <div class="content-block subject">
             <div class="content-type"> Subject: </div>
