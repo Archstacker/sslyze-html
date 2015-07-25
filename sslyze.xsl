@@ -189,29 +189,12 @@
       <span class="data"> <xsl:value-of select="certificate/subjectPublicKeyInfo/publicKey/exponent"/> </span>
     </div>
 
-    <div class="certificate-no-chain-block w-chain-block">
+    <div class="certificate-no-chain-block">
       <div class="drawer-info-holder">
         <div class="info-block">
-          <strong class="info-category">Recommended certificate chain:</strong>
+          <strong class="info-category"> Certificates </strong>
         </div>
-        <div class="certificate-chain-block">
-          <img src="ssl_files/chain-server-certificate.png" alt="Server Certificate image" width="61" height="56"></img>
-          <div class="chain-holder">
-            <xsl:apply-templates select="certificate[1]"/>
-          </div>
-        </div>
-        <div class="certificate-chain-block">
-          <img src="ssl_files/chain-intermediate-certificate.png" alt="CA Certificate image" width="61" height="56"></img>
-          <div class="chain-holder">
-            <xsl:apply-templates select="certificate[2]"/>
-          </div>
-        </div>
-        <div class="certificate-chain-block">
-          <img src="ssl_files/chain-root-certificate.png" alt="Root Certificate image" width="61" height="56"></img>
-          <div class="chain-holder root">
-            <xsl:apply-templates select="certificate[3]"/>
-          </div>
-        </div>
+        <xsl:apply-templates select="certificate"/>
       </div>
     </div>
 
@@ -219,6 +202,7 @@
   <xsl:template match="certificate">
     <div class="certificate-info-block">
       <div class="certificate-info-holder">
+        <img src="cert-icon.gif" alt="Server Certificate image" height="67" width="73"></img>
         <div class="certificate-content">
           <div class="content-block subject">
             <div class="content-type"> Subject: </div>
@@ -270,6 +254,7 @@
               </li>
             </ul>
           </div>
+          <a href="data:application/x-pem-file;charset=utf-8,{asPEM}" download="{@sha1Fingerprint}.pem" target="_blank" class="download-link">Download Certificate</a>
         </div>
       </div>
     </div>
