@@ -9,7 +9,6 @@
     <full key="port" value="Port"/>
 
     <full key="commonName" value="Common Name"/>
-    <full key="serialNumber" value="Serial Number"/>
     <full key="notBefore" value="Not Before"/>
     <full key="notAfter" value="Not After"/>
     <full key="signatureAlgorithm" value="Signature Algorithm"/>
@@ -66,6 +65,7 @@
                       <h3> Server Details </h3>
                     </a>
                     <div style="display: block;" class="detail-drawer server-drawer">
+                      <div class="drawer-image-holder">Server Details Icon</div>
                       <div class="drawer-info-holder">
                         <xsl:call-template name="basic-info-block">
                           <xsl:with-param name="node" select="@host"/>
@@ -83,8 +83,11 @@
                       <h3>Certificate Details</h3>
                     </a>
                     <div style="display: block;" class="detail-drawer certificate-drawer">
+                      <div class="drawer-image-holder">Certificate Details Icon</div>
                       <div class="drawer-info-holder">
                         <xsl:apply-templates select="certinfo/certificateChain"/>
+                        <xsl:apply-templates select="certinfo/ocspStapling"/>
+                        <xsl:apply-templates select="certinfo/certificateValidation"/>
                       </div>
                     </div>
 
@@ -92,6 +95,7 @@
                       <h3>Cipher Suites</h3>
                     </a>
                     <div style="display: block;" class="detail-drawer ssl-drawer">
+                      <div class="drawer-image-holder">SSL Configuration Icon</div>
                       <div class="drawer-info-holder">
                         <div class="info-block">
                           <strong class="info-category"> Protocol: </strong>
@@ -100,6 +104,7 @@
                         <xsl:apply-templates select="(sslv2 | sslv3 | tlsv1 | tlsv1_1 | tlsv1_2)/@isProtocolSupported"/>
                       </div>
                       <div class="cipher-drawer">
+                        <div class="drawer-image-holder">Cipher Suites Icon</div>
                         <div class="drawer-info-holder">
                           <xsl:apply-templates select="sslv2 | sslv3 | tlsv1 | tlsv1_1 | tlsv1_2"/>
                         </div>
@@ -110,6 +115,7 @@
                       <h3> Miscellaneous Details </h3>
                     </a>
                     <div style="display: block;" class="detail-drawer">
+                      <div class="drawer-image-holder">Miscellaneous Details Icon</div>
                       <div class="drawer-info-holder">
                         <xsl:apply-templates select="compression | heartbleed | reneg | resum"/>
                       </div>
@@ -141,11 +147,13 @@
   </xsl:template>
 
   <xsl:template match="sslv2 | sslv3 | tlsv1 | tlsv1_1 | tlsv1_2">
-    <div class="info-block">
-      <strong class="info-category section"> <xsl:value-of select="@title"/> </strong>
-      <strong class="info-category strength">Effective Strength:</strong>
-      <xsl:apply-templates select="acceptedCipherSuites" />
-    </div>
+    <xsl:if test="@isProtocolSupported = 'True'">
+      <div class="info-block">
+        <strong class="info-category section"> <xsl:value-of select="@title"/> </strong>
+        <strong class="info-category strength">Effective Strength:</strong>
+        <xsl:apply-templates select="acceptedCipherSuites" />
+      </div>
+    </xsl:if>
   </xsl:template>
 
   <xsl:template match="cipherSuite">
@@ -225,9 +233,6 @@
       <xsl:with-param name="node" select="certificate/subject/commonName"/>
     </xsl:call-template>
     <xsl:call-template name="basic-info-block">
-      <xsl:with-param name="node" select="certificate/serialNumber"/>
-    </xsl:call-template>
-    <xsl:call-template name="basic-info-block">
       <xsl:with-param name="node" select="certificate/validity/notBefore"/>
     </xsl:call-template>
     <xsl:call-template name="basic-info-block">
@@ -255,8 +260,44 @@
         <xsl:apply-templates select="certificate"/>
       </div>
     </div>
-
   </xsl:template>
+
+  <xsl:template match="ocspStapling">
+    <div class="info-block">
+      <strong class="info-category">
+        OCSP Stapling
+        <ul>
+          <li> Supported </li>
+        </ul>
+      </strong>
+      <ul class="data">
+        <li> <xsl:value-of select="@isSupported"/> </li>
+      </ul>
+    </div>
+  </xsl:template>
+
+  <xsl:template match="certificateValidation">
+    <div class="info-block last">
+      <strong class="info-category">
+        CertificateValidation
+        <ul>
+          <xsl:for-each select="pathValidation">
+            <li>
+              <xsl:value-of select="@usingTrustStore"/>
+            </li>
+          </xsl:for-each>
+        </ul>
+      </strong>
+      <ul class="data">
+        <xsl:for-each select="pathValidation">
+          <li>
+            <xsl:value-of select="@validationResult"/>
+          </li>
+        </xsl:for-each>
+      </ul>
+    </div>
+  </xsl:template>
+
   <xsl:template match="certificate">
     <div class="certificate-info-block">
       <div class="certificate-info-holder">
@@ -265,43 +306,37 @@
           <div class="content-block subject">
             <div class="content-type"> Subject: </div>
             <ul class="certificate-data-content">
-              <xsl:for-each select="subject/*">
-                <li>
-                    <span class="certificate-data-category">
-                      <xsl:call-template name="shortname">
-                        <xsl:with-param name="key" select="name()"/>
-                      </xsl:call-template>
-                    </span>
-                    <span class="content">
-                      <xsl:value-of select="."/>
-                    </span>
-                </li>
-              </xsl:for-each>
+              <xsl:apply-templates select="subject/organizationalUnitName"/>
+              <xsl:apply-templates select="subject/organizationName"/>
+              <xsl:apply-templates select="subject/commonName"/>
+              <xsl:apply-templates select="subject/stateOrProvinceName"/>
+              <xsl:apply-templates select="subject/countryName"/>
+              <xsl:apply-templates select="subject/localityName"/>
             </ul>
           </div>
           <div class="content-block issuer">
             <div class="content-type"> Issuer: </div>
             <ul class="certificate-data-content">
-              <xsl:for-each select="issuer/*">
-                <li>
-                    <span class="certificate-data-category">
-                      <xsl:call-template name="shortname">
-                        <xsl:with-param name="key" select="name()"/>
-                      </xsl:call-template>
-                    </span>
-                    <span class="content">
-                      <xsl:value-of select="."/>
-                    </span>
-                </li>
-              </xsl:for-each>
+              <xsl:apply-templates select="issuer/organizationalUnitName"/>
+              <xsl:apply-templates select="issuer/organizationName"/>
+              <xsl:apply-templates select="issuer/commonName"/>
+              <xsl:apply-templates select="issuer/stateOrProvinceName"/>
+              <xsl:apply-templates select="issuer/countryName"/>
+              <xsl:apply-templates select="issuer/localityName"/>
             </ul>
+          </div>
+          <div class="content-block expiry">
+            <div class="content-type"> Expiration Date: </div>
+            <div class="cert-data">
+                  <xsl:value-of select="validity/notAfter"/>
+            </div>
           </div>
           <div class="content-block last">
             <ul class="certificate-last-info">
               <li>
-                <div class="content-type"> Expiration Date: </div>
+                <div class="content-type"> Serial Number </div>
                 <div class="cert-data">
-                  <xsl:value-of select="validity/notAfter"/>
+                  <xsl:value-of select="serialNumber"/>
                 </div>
               </li>
               <li>
@@ -312,12 +347,25 @@
               </li>
             </ul>
           </div>
-          <a href="data:application/x-pem-file,{asPEM}" download="{@sha1Fingerprint}.pem" class="download-link">
+          <a href="data:application/x-pem-file,{asPEM}" download="{serialNumber}.pem" class="download-link">
             Download Certificate
           </a>
         </div>
       </div>
     </div>
+  </xsl:template>
+
+  <xsl:template match="subject/* | issuer/*">
+    <li>
+        <span class="certificate-data-category">
+          <xsl:call-template name="shortname">
+            <xsl:with-param name="key" select="name()"/>
+          </xsl:call-template>
+        </span>
+        <span class="content">
+          <xsl:value-of select="."/>
+        </span>
+    </li>
   </xsl:template>
 
   <xsl:template match="compression | heartbleed | reneg | resum">
