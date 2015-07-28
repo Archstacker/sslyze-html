@@ -28,6 +28,11 @@
     <full key="tlsv1" value="TLS 1.0"/>
     <full key="tlsv1_1" value="TLS 1.1"/>
     <full key="tlsv1_2" value="TLS 1.2"/>
+
+    <full key="reneg" value="Session Renegotiation"/>
+    <full key="resum" value="Session Resumption"/>
+    <full key="compression" value="Deflate Compression"/>
+    <full key="heartbleed" value="OpenSSL Heartbleed"/>
   </xsl:variable>
 
   <xsl:key name="FullName" match="full" use="@key"/>
@@ -396,19 +401,33 @@
     <div class="grid">
       <div class="info-block">
         <strong class="info-category section">
-          <xsl:value-of select="@title"/>
+        <xsl:call-template name="fullname">
+          <xsl:with-param name="key" select="name()"/>
+        </xsl:call-template>
         </strong>
         <div class="info-block">
-          <xsl:for-each select="*">
-            <xsl:apply-templates select="."/>
-          </xsl:for-each>
+            <xsl:choose>
+              <xsl:when test="@exception">
+                <strong class="grid-data"> 
+                  <xsl:value-of select="@exception"/>
+                </strong>
+                <span class="pass-fail bad">
+                  Error
+                </span>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:for-each select="*">
+                  <xsl:apply-templates select="."/>
+                </xsl:for-each>
+              </xsl:otherwise>
+            </xsl:choose>
         </div>
       </div>
     </div>
   </xsl:template>
 
   <xsl:template match="compression/compressionMethod">
-    <strong class="grid-data"> Server supports Deflate compression </strong>
+    <strong class="grid-data"> Supports Deflate compression </strong>
     <xsl:choose>
       <xsl:when test="@isSupported != 'True'">
         <span class="pass-fail good">
@@ -424,7 +443,7 @@
   </xsl:template>
 
   <xsl:template match="heartbleed/openSslHeartbleed">
-    <strong class="grid-data"> Server is vulnerable to Heartbleed </strong>
+    <strong class="grid-data"> Vulnerable to Heartbleed </strong>
     <xsl:choose>
       <xsl:when test="@isVulnerable != 'True'">
         <span class="pass-fail good">
