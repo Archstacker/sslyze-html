@@ -131,6 +131,18 @@
     </html>
   </xsl:template>
 
+  <xsl:template match="/target">
+    <xsl:call-template name="basic-info-block">
+      <xsl:with-param name="node" select="@host"/>
+    </xsl:call-template>
+    <xsl:call-template name="basic-info-block">
+      <xsl:with-param name="node" select="@ip"/>
+    </xsl:call-template>
+    <xsl:call-template name="basic-info-block">
+      <xsl:with-param name="node" select="@port"/>
+    </xsl:call-template>
+  </xsl:template>
+
   <xsl:template name="basic-info-block">
     <xsl:param name="node"/>
     <xsl:param name="addition" select="''" />
