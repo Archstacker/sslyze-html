@@ -275,38 +275,38 @@
   </xsl:template>
 
   <xsl:template match="ocspStapling">
-    <div class="info-block">
-      <strong class="info-category">
-        OCSP Stapling
-        <ul>
-          <li> Supported </li>
-        </ul>
-      </strong>
-      <ul class="data">
-        <li> <xsl:value-of select="@isSupported"/> </li>
-      </ul>
+    <div class="grid">
+      <div class="info-block">
+        <strong class="info-category section">
+          OCSP Stapling
+        </strong>
+        <div class="info-block">
+          <strong class="grid-data"> Supported </strong>
+          <span class="pass-fail good">
+            <xsl:value-of select="@isSupported"/>
+          </span>
+        </div>
+      </div>
     </div>
   </xsl:template>
 
   <xsl:template match="certificateValidation">
-    <div class="info-block last">
-      <strong class="info-category">
-        CertificateValidation
-        <ul>
+    <div class="grid">
+      <div class="info-block">
+        <strong class="info-category section">
+          CertificateValidation
+        </strong>
+        <div class="info-block">
           <xsl:for-each select="pathValidation">
-            <li>
-              <xsl:value-of select="@usingTrustStore"/>
-            </li>
+            <strong class="grid-data">
+              <xsl:value-of select="concat(concat(@usingTrustStore,'  '),@trustStoreVersion)"/>
+            </strong>
+            <span class="pass-fail good">
+              <xsl:value-of select="@validationResult"/>
+            </span>
           </xsl:for-each>
-        </ul>
-      </strong>
-      <ul class="data">
-        <xsl:for-each select="pathValidation">
-          <li>
-            <xsl:value-of select="@validationResult"/>
-          </li>
-        </xsl:for-each>
-      </ul>
+        </div>
+      </div>
     </div>
   </xsl:template>
 
