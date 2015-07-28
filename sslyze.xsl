@@ -301,9 +301,21 @@
             <strong class="grid-data">
               <xsl:value-of select="concat(concat(@usingTrustStore,'  '),@trustStoreVersion)"/>
             </strong>
-            <span class="pass-fail good">
-              <xsl:value-of select="@validationResult"/>
-            </span>
+            <xsl:choose>
+              <xsl:when test="@validationResult = 'ok'">
+                <span class="pass-fail good">
+                  <xsl:value-of select="@validationResult"/>
+                </span>
+              </xsl:when>
+              <xsl:otherwise>
+                <span class="pass-fail bad">
+                  error
+                </span>
+                <xsl:call-template name="tooltip">
+                  <xsl:with-param name="tipstr" select="@validationResult"/>
+                </xsl:call-template>
+              </xsl:otherwise>
+            </xsl:choose>
           </xsl:for-each>
         </div>
       </div>
