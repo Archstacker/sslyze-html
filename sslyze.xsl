@@ -299,7 +299,7 @@
     <div class="grid">
       <div class="info-block">
         <strong class="info-category section">
-          CertificateValidation
+          Certificate Validation
         </strong>
         <div class="info-block">
           <xsl:for-each select="pathValidation">
@@ -316,9 +316,18 @@
                 <span class="pass-fail bad">
                   error
                 </span>
-                <xsl:call-template name="tooltip">
-                  <xsl:with-param name="tipstr" select="@validationResult"/>
-                </xsl:call-template>
+                <xsl:choose>
+                  <xsl:when test="@error">
+                    <xsl:call-template name="tooltip">
+                      <xsl:with-param name="tipstr" select="@error"/>
+                    </xsl:call-template>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <xsl:call-template name="tooltip">
+                      <xsl:with-param name="tipstr" select="@validationResult"/>
+                    </xsl:call-template>
+                  </xsl:otherwise>
+                </xsl:choose>
               </xsl:otherwise>
             </xsl:choose>
           </xsl:for-each>
